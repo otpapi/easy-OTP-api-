@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/login",
+      "dest": "login.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "home.html"
+    },
+    {
+      "src": "/api-console",
+      "dest": "api.html"
+    },
+    {
+      "src": "/wallet-topup",
+      "dest": "wallet.html"
+    },
+    {
+      "src": "/docs-api",
+      "dest": "docs.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "index.js"
+    }
+  ]
+}
