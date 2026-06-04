@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EASY OTP API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: 79, 70, 229;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+        body.theme-indigo { --primary: 79, 70, 229; --primary-glow: rgba(79, 70, 229, 0.15); }
+        body.theme-violet { --primary: 124, 58, 237; --primary-glow: rgba(124, 58, 237, 0.15); }
+        body.theme-emerald { --primary: 5, 150, 105; --primary-glow: rgba(5, 150, 105, 0.15); }
+        body.theme-rose { --primary: 225, 29, 72; --primary-glow: rgba(225, 29, 72, 0.15); }
+        body.theme-amber { --primary: 217, 119, 6; --primary-glow: rgba(217, 119, 6, 0.15); }
+
+        .bg-primary-dynamic { background-color: rgb(var(--primary)); }
+        .text-primary-dynamic { color: rgb(var(--primary)); }
+        .border-primary-dynamic { border-color: rgb(var(--primary)); }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafafa;
+            background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        * { transition-duration: 200ms; }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed top-0 bottom-0 left-[-280px] md:left-0 w-[260px] bg-slate-950 text-white z-50 flex flex-col justify-between border-r border-slate-900 transition-all duration-300 shadow-xl">
+        <div>
+            <div class="p-6 border-b border-slate-900/60 flex items-center gap-3">
+                <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><i class="fas fa-bolt text-white text-xs"></i></div>
+                <div>
+                    <h2 class="font-extrabold text-xs tracking-tight uppercase leading-none">EASY OTP</h2>
+                    <span class="text-[7px] text-slate-500 font-extrabold tracking-widest uppercase">API PROVIDER</span>
+                </div>
+            </div>
+            <nav class="p-4 space-y-1.5">
+                <a href="home.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-white bg-white/5 rounded-xl transition-all"><i class="fas fa-chart-pie"></i> Home</a>
+                <a href="api.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-plug"></i> API Console</a>
+                <a href="wallet.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-wallet"></i> Wallet</a>
+                <a href="docs.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-book"></i> Documentation</a>
+            </nav>
+        </div>
+    </aside>
+
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+    <div class="md:pl-[260px] min-h-screen flex flex-col">
+        <!-- TOPBAR -->
+        <header class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200/50 z-30 px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-700"><i class="fas fa-bars"></i></button>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Developer Metrics Portal</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex gap-1.5 p-1 bg-slate-50 border border-slate-200/80 rounded-full shadow-sm">
+                    <button onclick="changeTheme('indigo')" class="w-3.5 h-3.5 rounded-full bg-indigo-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('violet')" class="w-3.5 h-3.5 rounded-full bg-violet-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('emerald')" class="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('rose')" class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('amber')" class="w-3.5 h-3.5 rounded-full bg-amber-600 border border-white hover:scale-110 transition-all"></button>
+                </div>
+
+                <div class="h-6 w-px bg-slate-200"></div>
+
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:block">
+                        <p id="userPhone" class="text-xs font-bold text-slate-800 leading-none"></p>
+                        <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mt-0.5 inline-block">Developer Account</span>
+                    </div>
+                    <button onclick="logout()" class="w-9 h-9 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 transition-colors"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-8">
+
+            <!-- Welcome Banner Card -->
+            <div class="relative bg-slate-950 text-white rounded-3xl p-6 md:p-8 border border-slate-900 overflow-hidden shadow-xl">
+                <h1 class="text-xl md:text-2xl font-black tracking-tight mb-1">Welcome back, <span id="welcomeName" class="text-primary-dynamic">Developer</span>!</h1>
+                <p class="text-slate-400 text-xs font-medium leading-relaxed max-w-lg">Monitor your WhatsApp & Gmail secure OTP delivery rates, active wallet balances, and developer API logs in real-time.</p>
+            </div>
+
+            <!-- DYNAMIC WHATSAPP CONNECTION STATUS NODE -->
+            <div id="whatsappNodeCard" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row w-full">
+                    <div id="nodeIconContainer" class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-xl">
+                        <i id="nodeIcon" class="fab fa-whatsapp text-slate-400"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-center sm:justify-start gap-2">
+                            <h3 class="text-sm font-extrabold text-slate-950">WhatsApp API Node Connection</h3>
+                            <span id="nodeBadge" class="text-[8px] font-extrabold px-2 py-0.5 rounded-full tracking-wider uppercase">Loading Status</span>
+                        </div>
+                        <p id="nodeDetails" class="text-xs text-slate-400 font-medium mt-1">Please wait, loading WhatsApp gateway sessions...</p>
+                    </div>
+                </div>
+                <div id="nodeActionContainer" class="w-full sm:w-auto text-right">
+                    <!-- Disconnect Button Generated Dynamically -->
+                </div>
+            </div>
+
+            <!-- DYNAMIC STATS CARDS -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm relative">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Wallet Balance</span>
+                    <h2 id="balance" class="text-3xl font-black tracking-tight text-slate-950">₹0.00</h2>
+                    <p class="text-[10px] font-semibold text-slate-500 mt-2"><i class="fas fa-circle-check text-emerald-500 mr-1"></i> Available API credits</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm relative">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Total OTP Sent</span>
+                    <h2 id="totalOtp" class="text-3xl font-black tracking-tight text-slate-950 font-sans">0</h2>
+                    <p class="text-[10px] font-semibold text-slate-500 mt-2"><i class="fas fa-paper-plane text-primary-dynamic mr-1"></i> <span id="todayOtp">0</span> sent today</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm relative">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">OTP Unit Cost</span>
+                    <h2 class="text-3xl font-black tracking-tight text-slate-950">₹0.30</h2>
+                    <p class="text-[10px] font-semibold text-slate-500 mt-2"><i class="fas fa-tags text-amber-500 mr-1"></i> Fixed pricing WhatsApp+Email</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm relative">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Today's Spend</span>
+                    <h2 id="todaySpend" class="text-3xl font-black tracking-tight text-slate-950">₹0.00</h2>
+                    <p class="text-[10px] font-semibold text-slate-500 mt-2"><i class="fas fa-chart-line text-rose-500 mr-1"></i> Running daily expenditures</p>
+                </div>
+            </div>
+
+            <!-- DETAIL INFORMATION GRID -->
+            <div class="grid lg:grid-cols-3 gap-6">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h3 class="font-extrabold text-sm text-slate-950 uppercase tracking-tight flex items-center gap-2 mb-4 border-b border-slate-100 pb-3"><i class="fab fa-whatsapp text-emerald-500"></i> WhatsApp OTP Relay</h3>
+                    <ul class="space-y-3.5 text-xs text-slate-500 font-medium">
+                        <li class="flex items-center gap-2"><i class="fas fa-circle-check text-emerald-500"></i> Instant 2-second sub delivery</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-globe text-indigo-500"></i> Works with any Indian number (+91)</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-charging-station text-amber-500"></i> 99.9% Route Uptime</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-rupee-sign text-emerald-500"></i> Flat rate ₹0.30 per send</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h3 class="font-extrabold text-sm text-slate-950 uppercase tracking-tight flex items-center gap-2 mb-4 border-b border-slate-100 pb-3"><i class="fas fa-envelope text-indigo-500"></i> Gmail Tunnel Secure</h3>
+                    <ul class="space-y-3.5 text-xs text-slate-500 font-medium">
+                        <li class="flex items-center gap-2"><i class="fas fa-circle-check text-emerald-500"></i> Routed to primary inbox directly</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-shield-alt text-indigo-500"></i> Encrypted serverless endpoints</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-tachometer-alt text-amber-500"></i> High-deliverability SLA limits</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-rupee-sign text-emerald-500"></i> Flat rate ₹0.30 per send</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm font-sans">
+                    <h3 class="font-extrabold text-sm text-slate-950 uppercase tracking-tight flex items-center gap-2 mb-4 border-b border-slate-100 pb-3"><i class="fas fa-chart-bar text-amber-500"></i> Live Console Stats</h3>
+                    <ul class="space-y-3.5 text-xs text-slate-500 font-medium">
+                        <li class="flex justify-between items-center"><span>Active Sessions</span> <span id="activeSessions" class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">0</span></li>
+                        <li class="flex justify-between items-center"><span>Success Ratio</span> <span id="successRate" class="font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md">0%</span></li>
+                        <li class="flex justify-between items-center"><span>Weekly Sent</span> <span id="weekOtp" class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">0</span></li>
+                        <li class="flex justify-between items-center"><span>Monthly Volume</span> <span id="monthOtp" class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">0</span></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        const savedUser = localStorage.getItem('easyotp_user');
+        if (!savedUser) { window.location.replace('login.html'); }
+
+        const user = JSON.parse(savedUser);
+
+        const savedTheme = localStorage.getItem('easyotp_theme') || 'indigo';
+        document.body.className = `antialiased text-slate-800 theme-${savedTheme}`;
+
+        function changeTheme(themeName) {
+            localStorage.setItem('easyotp_theme', themeName);
+            document.body.className = `antialiased text-slate-800 theme-${themeName}`;
+        }
+
+        document.getElementById('userPhone').innerText = '+91 ' + user.phone;
+        document.getElementById('welcomeName').innerText = user.phone;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('left-0');
+            sidebar.classList.toggle('left-[-280px]');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Fetch Dashboard Realtime Firebase Data (Includes WhatsApp Status)
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/dashboard-data');
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                const data = await response.json();
+                if (data.status) {
+                    // Stats
+                    document.getElementById('balance').innerText = '₹' + parseFloat(data.balance).toFixed(2);
+                    document.getElementById('totalOtp').innerText = data.total_otp;
+                    document.getElementById('todayOtp').innerText = data.today_otp;
+                    document.getElementById('todaySpend').innerText = '₹' + parseFloat(data.today_spend).toFixed(2);
+                    document.getElementById('activeSessions').innerText = data.active_sessions;
+                    document.getElementById('successRate').innerText = data.success_rate + '%';
+                    document.getElementById('weekOtp').innerText = data.week_otp;
+                    document.getElementById('monthOtp').innerText = data.month_otp;
+
+                    // WhatsApp Node Status Rendering
+                    renderWhatsAppStatus(data);
+                }
+            } catch (err) {
+                console.error('API load error');
+            }
+        }
+
+        function renderWhatsAppStatus(data) {
+            const nodeBadge = document.getElementById('nodeBadge');
+            const nodeDetails = document.getElementById('nodeDetails');
+            const nodeIconContainer = document.getElementById('nodeIconContainer');
+            const nodeIcon = document.getElementById('nodeIcon');
+            const actionContainer = document.getElementById('nodeActionContainer');
+
+            nodeBadge.className = 'text-[8px] font-extrabold px-2 py-0.5 rounded-full tracking-wider uppercase';
+            nodeIcon.className = 'fab fa-whatsapp';
+            actionContainer.innerHTML = '';
+
+            if (data.whatsapp_connected === 'CONNECTED') {
+                nodeBadge.classList.add('bg-emerald-50', 'text-emerald-600', 'border', 'border-emerald-100');
+                nodeBadge.innerText = 'CONNECTED';
+                nodeDetails.innerText = `WhatsApp is actively connected to +91 ${data.whatsapp_number}. API operations authorized.`;
+                nodeIconContainer.className = 'w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl text-emerald-500 border border-emerald-100';
+
+                actionContainer.innerHTML = `
+                    <button onclick="disconnectWhatsApp()" class="bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-600 font-bold text-xs py-2.5 px-5 rounded-xl transition-all active:scale-95">Disconnect Node</button>
+                `;
+            } else if (data.whatsapp_connected === 'PENDING') {
+                nodeBadge.classList.add('bg-amber-50', 'text-amber-600', 'border', 'border-amber-100', 'animate-pulse');
+                nodeBadge.innerText = 'PAIRING PENDING';
+                nodeDetails.innerText = `Connecting session to +91 ${data.whatsapp_number}. Enter Pairing Code: ${data.pairing_code} inside your WhatsApp application.`;
+                nodeIconContainer.className = 'w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl text-amber-500 border border-amber-100';
+
+                actionContainer.innerHTML = `
+                    <a href="api.html" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs py-2.5 px-5 rounded-xl transition-all inline-block active:scale-95 shadow-md">Complete Setup</a>
+                `;
+            } else {
+                nodeBadge.classList.add('bg-slate-100', 'text-slate-500', 'border', 'border-slate-200');
+                nodeBadge.innerText = 'NOT CONNECTED';
+                nodeDetails.innerText = 'No API Session active. Please navigate to API Console to pair your WhatsApp node.';
+                nodeIconContainer.className = 'w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-xl text-slate-400 border border-slate-200';
+
+                actionContainer.innerHTML = `
+                    <a href="api.html" class="bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs py-2.5 px-5 rounded-xl transition-all inline-block active:scale-95 shadow-md shadow-slate-950/5">Link WhatsApp</a>
+                `;
+            }
+        }
+
+        async function disconnectWhatsApp() {
+            if (!confirm("Are you sure you want to log out your WhatsApp node session? Current API key will stop working immediately.")) return;
+            try {
+                const response = await fetch('/api/whatsapp/disconnect', { method: 'POST' });
+                const result = await response.json();
+                if (result.status) {
+                    alert("Node session logged out successfully!");
+                    loadDashboardData();
+                }
+            } catch (e) {
+                alert("Disconnect request failed");
+            }
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            localStorage.removeItem('easyotp_user');
+            window.location.replace('login.html');
+        }
+
+        loadDashboardData();
+        setInterval(loadDashboardData, 10000); // Fast status checker loop on home
+    </script>
+</body>
+</html>

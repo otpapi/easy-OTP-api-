@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet - EASY OTP API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: 79, 70, 229;
+            --primary-hover: 67, 56, 202;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+        body.theme-indigo { --primary: 79, 70, 229; --primary-hover: 67, 56, 202; --primary-glow: rgba(79, 70, 229, 0.15); }
+        body.theme-violet { --primary: 124, 58, 237; --primary-hover: 109, 40, 217; --primary-glow: rgba(124, 58, 237, 0.15); }
+        body.theme-emerald { --primary: 5, 150, 105; --primary-hover: 4, 120, 87; --primary-glow: rgba(5, 150, 105, 0.15); }
+        body.theme-rose { --primary: 225, 29, 72; --primary-hover: 190, 24, 74; --primary-glow: rgba(225, 29, 72, 0.15); }
+        body.theme-amber { --primary: 217, 119, 6; --primary-hover: 180, 83, 9; --primary-glow: rgba(217, 119, 6, 0.15); }
+
+        .bg-primary-dynamic { background-color: rgb(var(--primary)); }
+        .bg-primary-hover-dynamic:hover { background-color: rgb(var(--primary-hover)); }
+        .text-primary-dynamic { color: rgb(var(--primary)); }
+        .border-primary-dynamic { border-color: rgb(var(--primary)); }
+        .bg-primary-glow-dynamic { background-color: var(--primary-glow); }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafafa;
+            background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        * { transition-duration: 200ms; }
+    </style>
+</head>
+<body class="theme-indigo antialiased text-slate-800">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed top-0 bottom-0 left-[-280px] md:left-0 w-[260px] bg-slate-950 text-white z-50 flex flex-col justify-between border-r border-slate-900 transition-all duration-300">
+        <div>
+            <div class="p-6 border-b border-slate-900/60 flex items-center gap-3">
+                <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><i class="fas fa-bolt text-white text-xs"></i></div>
+                <div>
+                    <h2 class="font-extrabold text-xs tracking-tight uppercase leading-none">EASY OTP</h2>
+                    <span class="text-[7px] text-slate-500 font-extrabold tracking-widest uppercase">API PROVIDER</span>
+                </div>
+            </div>
+            <nav class="p-4 space-y-1.5">
+                <a href="home.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-chart-pie"></i> Home</a>
+                <a href="api.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-plug"></i> API Console</a>
+                <a href="wallet.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-white bg-white/5 rounded-xl transition-all"><i class="fas fa-wallet"></i> Wallet</a>
+                <a href="docs.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-book"></i> Documentation</a>
+            </nav>
+        </div>
+    </aside>
+
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+    <div class="md:pl-[260px] min-h-screen flex flex-col">
+        <header class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200/50 z-30 px-6 h-16 flex items-center justify-between">
+            <button onclick="toggleSidebar()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-700"><i class="fas fa-bars"></i></button>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Instant Topup Portal</span>
+            
+            <div class="flex items-center gap-4">
+                <div class="flex gap-1.5 p-1 bg-slate-50 border border-slate-200/80 rounded-full">
+                    <button onclick="changeTheme('indigo')" class="w-3.5 h-3.5 rounded-full bg-indigo-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('violet')" class="w-3.5 h-3.5 rounded-full bg-violet-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('emerald')" class="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('rose')" class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('amber')" class="w-3.5 h-3.5 rounded-full bg-amber-600 border border-white hover:scale-110 transition-all"></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-8">
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Your Wallet Credits</h1>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- CARD 1: BALANCE STATUS -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-56">
+                    <div>
+                        <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">Available balance</span>
+                        <h2 id="balance" class="text-4xl font-black tracking-tight text-slate-950">₹452.10</h2>
+                    </div>
+                    <div class="p-3 bg-slate-50 border border-slate-150 rounded-xl text-[10px] font-bold text-slate-500 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-dynamic"></i> Minimum balance rule not active. Pay-as-you-go.
+                    </div>
+                </div>
+
+                <!-- CARD 2: QUICK RECHARGE SELECTOR -->
+                <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-56">
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-950 uppercase tracking-widest mb-4">Instant UPI Recharge</h3>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="selectAmount(100)" class="bg-slate-50 border border-slate-200 hover:border-slate-950 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 transition">₹100</button>
+                            <button onclick="selectAmount(500)" class="bg-slate-50 border border-slate-200 hover:border-slate-950 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 transition">₹500</button>
+                            <button onclick="selectAmount(1000)" class="bg-slate-50 border border-slate-200 hover:border-slate-950 px-4 py-3 rounded-xl font-bold text-sm text-slate-700 transition">₹1,000</button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <input type="number" id="customAmount" placeholder="Or enter manual amount" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs font-bold outline-none">
+                        <button onclick="triggerPaymentModal()" class="bg-primary-dynamic bg-primary-hover-dynamic text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md transition-all whitespace-nowrap">RECHARGE NOW</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSACTION HISTORIES -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <h3 class="text-xs font-extrabold text-slate-950 uppercase tracking-widest mb-6">Recent Ledger Transactions</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3">Transaction ID</th>
+                                <th class="px-4 py-3">Date</th>
+                                <th class="px-4 py-3">Type</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3 text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-medium">
+                            <tr>
+                                <td class="px-4 py-3 font-bold text-slate-700">TXN-98402511</td>
+                                <td class="px-4 py-3 text-slate-400">Oct 24, 2024</td>
+                                <td class="px-4 py-3 text-emerald-600">UPI Topup</td>
+                                <td class="px-4 py-3"><span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-bold text-[9px]">COMPLETED</span></td>
+                                <td class="px-4 py-3 text-right font-bold text-emerald-600">+ ₹500.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-bold text-slate-700">TXN-98210344</td>
+                                <td class="px-4 py-3 text-slate-400">Oct 23, 2024</td>
+                                <td class="px-4 py-3 text-rose-500">API Usage Deductions</td>
+                                <td class="px-4 py-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold text-[9px]">DEBIT</span></td>
+                                <td class="px-4 py-3 text-right font-bold text-slate-800">- ₹47.90</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- DYNAMIC POPUP PAYMENT SIMULATOR MODAL -->
+    <div id="payment-modal" class="fixed inset-0 z-[250] hidden items-center justify-center bg-slate-950/40 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl border border-slate-200 shadow-2xl p-6 relative">
+            <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="text-center py-4">
+                <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-2xl mb-4 border border-emerald-100 mx-auto">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h3 class="text-sm font-black text-slate-900 tracking-tight">Scan QR to pay</h3>
+                <p class="text-[10px] text-slate-400 font-medium px-4 mt-1 leading-relaxed">Scan with any BHIM-UPI App like PhonePe, GPay or Paytm.</p>
+                
+                <div class="w-40 h-40 bg-slate-100 border border-slate-200 rounded-2xl mx-auto my-6 flex items-center justify-center">
+                    <!-- Placeholder QR -->
+                    <i class="fas fa-qrcode text-7xl text-slate-400"></i>
+                </div>
+
+                <div class="text-slate-800 font-black text-lg mb-6">Total: <span class="text-primary-dynamic" id="paymentTargetAmount">₹0.00</span></div>
+
+                <button onclick="simulateSuccessfulRecharge()" class="w-full bg-primary-dynamic bg-primary-hover-dynamic text-white py-3 rounded-xl font-bold text-xs shadow-md transition-all">
+                    SIMULATE SUCCESSFUL PAYMENT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('left-0');
+            document.getElementById('sidebar').classList.toggle('left-[-280px]');
+            document.getElementById('overlay').classList.toggle('hidden');
+        }
+
+        function changeTheme(themeName) {
+            document.body.className = `theme-${themeName} antialiased text-slate-800`;
+        }
+
+        function selectAmount(amount) {
+            document.getElementById('customAmount').value = amount;
+        }
+
+        function triggerPaymentModal() {
+            const amount = document.getElementById('customAmount').value;
+            if (!amount || amount <= 0) {
+                alert("Please select or enter a recharge amount.");
+                return;
+            }
+            document.getElementById('paymentTargetAmount').innerText = '₹' + parseFloat(amount).toFixed(2);
+            const modal = document.getElementById('payment-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('payment-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function simulateSuccessfulRecharge() {
+            alert("Payment simulator successfully verified your top-up. Credits added!");
+            closePaymentModal();
+        }
+    </script>
+</body>
+</html>

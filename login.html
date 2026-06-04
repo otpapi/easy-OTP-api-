@@ -1,0 +1,504 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Login - EASY OTP API</title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+    <style>
+        :root {
+            --primary: 79, 70, 229; /* Default Indigo-600 */
+            --primary-hover: 67, 56, 202; /* Indigo-700 */
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+
+        /* Accent Color Themes */
+        body.theme-indigo {
+            --primary: 79, 70, 229;
+            --primary-hover: 67, 56, 202;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+        body.theme-violet {
+            --primary: 124, 58, 237; /* Violet-600 */
+            --primary-hover: 109, 40, 217;
+            --primary-glow: rgba(124, 58, 237, 0.15);
+        }
+        body.theme-emerald {
+            --primary: 5, 150, 105; /* Emerald-600 */
+            --primary-hover: 4, 120, 87;
+            --primary-glow: rgba(5, 150, 105, 0.15);
+        }
+        body.theme-rose {
+            --primary: 225, 29, 72; /* Rose-600 */
+            --primary-hover: 190, 24, 74;
+            --primary-glow: rgba(225, 29, 72, 0.15);
+        }
+        body.theme-amber {
+            --primary: 217, 119, 6; /* Amber-600 */
+            --primary-hover: 180, 83, 9;
+            --primary-glow: rgba(217, 119, 6, 0.15);
+        }
+
+        /* Dynamic Classes mapped to CSS Variables */
+        .bg-primary-dynamic { background-color: rgb(var(--primary)); }
+        .bg-primary-hover-dynamic:hover { background-color: rgb(var(--primary-hover)); }
+        .text-primary-dynamic { color: rgb(var(--primary)); }
+        .border-primary-dynamic { border-color: rgb(var(--primary)); }
+        .bg-primary-glow-dynamic { background-color: var(--primary-glow); }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafafa;
+            background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Smooth Transition for Accent Shifting */
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
+        }
+
+        /* OTP Input Boxes Custom Styling */
+        .otp-box {
+            width: 44px;
+            height: 52px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .otp-box:focus {
+            border-color: rgb(var(--primary));
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+        .otp-box.filled {
+            background-color: #f8fafc;
+            border-color: rgb(var(--primary));
+        }
+
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+            animation: fade .3s ease;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head> 
+<body class="theme-indigo min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
+
+    <!-- Top floating gradient glow -->
+    <div class="absolute inset-0 bg-primary-glow-dynamic blur-[120px] rounded-full scale-50 -z-10 pointer-events-none"></div>
+
+    <div class="w-full max-w-md bg-white border border-slate-200/80 rounded-3xl shadow-2xl shadow-slate-950/5 overflow-hidden"> 
+        
+        <!-- HEADER -->
+        <div class="p-8 border-b border-slate-150 bg-slate-50/50"> 
+            <div class="flex items-center justify-between mb-6">
+                <!-- Branding Logo -->
+                <div class="flex items-center gap-2.5"> 
+                    <div class="w-8 h-8 bg-slate-950 rounded-lg flex items-center justify-center shadow-md"> 
+                        <i class="fas fa-bolt text-white text-xs"></i> 
+                    </div> 
+                    <div>
+                        <h1 class="font-black text-sm tracking-tight leading-none text-slate-950">EASY OTP</h1> 
+                        <span class="text-[7.5px] text-slate-400 font-extrabold tracking-widest uppercase">OTP RELAY</span>
+                    </div>
+                </div> 
+
+                <!-- Custom Theme Accent Color Selector -->
+                <div class="flex gap-1.5 p-1 bg-white border border-slate-200 rounded-full shadow-sm">
+                    <button onclick="changeTheme('indigo')" class="w-4.5 h-4.5 rounded-full bg-indigo-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('violet')" class="w-4.5 h-4.5 rounded-full bg-violet-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('emerald')" class="w-4.5 h-4.5 rounded-full bg-emerald-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('rose')" class="w-4.5 h-4.5 rounded-full bg-rose-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('amber')" class="w-4.5 h-4.5 rounded-full bg-amber-600 border border-white hover:scale-110 transition-all"></button>
+                </div>
+            </div>
+            
+            <h2 class="text-2xl font-extrabold tracking-tight text-slate-950 mb-1.5">Log in</h2> 
+            <p class="text-xs text-slate-400 font-medium leading-relaxed">Secure WhatsApp OTP authentication for modern applications.</p> 
+        </div> 
+
+        <!-- BODY -->
+        <div class="p-8"> 
+            <div id="messageBox" class="message hidden mb-6 p-4 rounded-xl text-xs font-bold border leading-relaxed"></div> 
+            
+            <!-- STEP 1 --> 
+            <div id="step1" class="step active"> 
+                <div class="mb-5"> 
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Mobile Number</label> 
+                    <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden focus-within:border-slate-950 focus-within:ring-2 focus-within:ring-slate-950/10 transition-all"> 
+                        <span class="px-4 py-3 bg-slate-50 border-r border-slate-200 text-sm font-bold text-slate-500">+91</span> 
+                        <input type="tel" id="phoneInput" placeholder="9876543210" maxlength="10" inputmode="numeric" class="w-full px-4 py-3 text-sm font-bold text-slate-800 placeholder:text-slate-300 outline-none"> 
+                    </div> 
+                </div> 
+                <button class="w-full bg-primary-dynamic bg-primary-hover-dynamic text-white py-3.5 rounded-xl font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all flex items-center justify-center gap-2" id="sendBtn" onclick="sendOTP()"> 
+                    <i class="fab fa-whatsapp text-sm"></i> Continue with WhatsApp 
+                </button> 
+                <div class="text-center mt-5 text-[10px] text-slate-400 font-semibold tracking-wide">OTP will be sent instantly on WhatsApp.</div> 
+            </div> 
+            
+            <!-- STEP 2 --> 
+            <div id="step2" class="step"> 
+                <!-- Header displaying verified phone -->
+                <div class="p-3 border border-slate-200/80 rounded-xl bg-slate-50 text-center font-bold text-xs text-slate-700 mb-6 flex items-center justify-center gap-2" id="phoneDisplay"></div> 
+                
+                <div class="mb-5"> 
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider text-center mb-3">Verification Code</label> 
+                    <div class="otp-container flex justify-between gap-2.5 max-w-xs mx-auto" id="otpContainer"></div> 
+                </div> 
+
+                <!-- Verification Timer -->
+                <div class="timer flex items-center justify-center gap-2 py-2 px-4 bg-slate-50 border border-slate-200 rounded-lg max-w-[120px] mx-auto mb-6 text-xs font-bold text-slate-500"> 
+                    <i class="far fa-clock"></i> 
+                    <span id="timerDisplay">05:00</span> 
+                </div> 
+
+                <button class="w-full bg-primary-dynamic bg-primary-hover-dynamic text-white py-3.5 rounded-xl font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all" id="verifyBtn" onclick="verifyOTP()">Verify & Continue</button> 
+                
+                <div class="flex gap-3 mt-4"> 
+                    <button class="w-1/2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 py-3 rounded-xl font-bold text-xs active:scale-95 transition-all disabled:opacity-50" id="resendBtn" onclick="resendOTP()" disabled>Resend</button> 
+                    <button class="w-1/2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 py-3 rounded-xl font-bold text-xs active:scale-95 transition-all" onclick="goBack()">Back</button> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+
+    <!-- SCRIPTS -->
+    <script>
+        // Custom color theme switcher to align colors
+        function changeTheme(themeName) {
+            const body = document.body;
+            body.className = ''; // Reset custom class structure
+            body.classList.add('min-h-screen', 'flex', 'items-center', 'justify-center', 'p-4', 'relative', 'overflow-x-hidden', `theme-${themeName}`);
+        }
+
+        let otpBoxes = [];
+        let timerInterval = null;
+        let timeLeft = 300;
+        let currentPhone = '';
+
+        // =========================
+        // SHOW MESSAGE (Visual Updates for message card)
+        // =========================
+        function showMessage(msg, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = msg;
+            box.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'bg-rose-50', 'text-rose-700', 'border-rose-200');
+
+            if (type === 'success') {
+                box.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+            } else {
+                box.classList.add('bg-rose-50', 'text-rose-700', 'border-rose-200');
+            }
+            box.classList.remove('hidden');
+
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 5000);
+        }
+
+        // =========================
+        // BUTTON LOADING (Premium Spinner UI Integration)
+        // =========================
+        function setLoading(btn, loading, originalHtml) {
+            if (!btn) return;
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = 'Processing <span class="loader"></span>';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        // =========================
+        // CREATE OTP BOXES (Cleaned up structure for layout integration)
+        // =========================
+        function createOtpBoxes() {
+            const container = document.getElementById('otpContainer');
+            container.innerHTML = '';
+            otpBoxes = [];
+
+            for (let i = 0; i < 6; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.inputMode = 'numeric';
+                input.classList.add('otp-box');
+
+                input.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+
+                    if (e.target.value) {
+                        e.target.classList.add('filled');
+                    } else {
+                        e.target.classList.remove('filled');
+                    }
+
+                    if (e.target.value && i < 5) {
+                        otpBoxes[i + 1].focus();
+                    }
+
+                    let fullOtp = getOtp();
+                    if (fullOtp.length === 6 && timeLeft > 0) {
+                        verifyOTP();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && i > 0) {
+                        otpBoxes[i - 1].focus();
+                        otpBoxes[i - 1].value = '';
+                        otpBoxes[i - 1].classList.remove('filled');
+                    }
+                });
+
+                container.appendChild(input);
+                otpBoxes.push(input);
+            }
+
+            if (otpBoxes[0]) {
+                otpBoxes[0].focus();
+            }
+        }
+
+        // =========================
+        // GET OTP
+        // =========================
+        function getOtp() {
+            return otpBoxes.map(box => box.value).join('');
+        }
+
+        // =========================
+        // CLEAR OTP
+        // =========================
+        function clearOtpBoxes() {
+            for (let box of otpBoxes) {
+                box.value = '';
+                box.classList.remove('filled');
+            }
+            if (otpBoxes[0]) {
+                otpBoxes[0].focus();
+            }
+        }
+
+        // =========================
+        // TIMER
+        // =========================
+        function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            timeLeft = 300;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 1) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    document.getElementById('resendBtn').disabled = false;
+                    document.getElementById('verifyBtn').disabled = true;
+                    showMessage('OTP expired! Please resend.', 'error');
+                } else {
+                    timeLeft--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+            const secs = String(timeLeft % 60).padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // =========================
+        // API CALLS
+        // =========================
+        async function callSendOTP(phone) {
+            const formData = new FormData();
+            formData.append('phone', phone);
+            const response = await fetch('api.php', {
+                method: 'POST',
+                body: formData
+            });
+            return await response.json();
+        }
+
+        async function callVerifyOTP(otp) {
+            const formData = new FormData();
+            formData.append('verify_otp', otp);
+            const response = await fetch('api.php', {
+                method: 'POST',
+                body: formData
+            });
+            return await response.json();
+        }
+
+        // =========================
+        // SEND OTP
+        // =========================
+        async function sendOTP() {
+            const phone = document.getElementById('phoneInput').value.replace(/\D/g, '');
+
+            if (phone.length !== 10) {
+                showMessage('Please enter valid 10-digit mobile number', 'error');
+                return;
+            }
+
+            currentPhone = phone;
+            const sendBtn = document.getElementById('sendBtn');
+            const originalHtml = sendBtn.innerHTML;
+
+            setLoading(sendBtn, true, originalHtml);
+
+            try {
+                const result = await callSendOTP(currentPhone);
+                setLoading(sendBtn, false, originalHtml);
+
+                if (result.status === true) {
+                    showMessage('✅ OTP sent successfully!', 'success');
+                    document.getElementById('phoneDisplay').innerHTML = `<i class="fab fa-whatsapp"></i> +91 ${currentPhone}`;
+                    createOtpBoxes();
+                    stopTimer();
+                    startTimer();
+
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById('step2').classList.add('active');
+                } else {
+                    showMessage(result.message || 'Failed to send OTP', 'error');
+                }
+            } catch (err) {
+                setLoading(sendBtn, false, originalHtml);
+                showMessage('Network error', 'error');
+            }
+        }
+
+        // =========================
+        // VERIFY OTP
+        // =========================
+        async function verifyOTP() {
+            const otp = getOtp();
+
+            if (otp.length !== 6) {
+                showMessage('Please enter complete OTP', 'error');
+                return;
+            }
+
+            const verifyBtn = document.getElementById('verifyBtn');
+            const originalHtml = verifyBtn.innerHTML;
+
+            setLoading(verifyBtn, true, originalHtml);
+
+            try {
+                const result = await callVerifyOTP(otp);
+                setLoading(verifyBtn, false, originalHtml);
+
+                if (result.status === true) {
+                    // SAVE LOGIN
+                    localStorage.setItem('easyotp_user', JSON.stringify({
+                        phone: currentPhone,
+                        logged_in: true,
+                        timestamp: Date.now()
+                    }));
+
+                    showMessage('✅ Login successful!', 'success');
+                    stopTimer();
+
+                    setTimeout(() => {
+                        window.location.replace('home.html');
+                    }, 1000);
+                } else {
+                    showMessage(result.message || 'Invalid OTP', 'error');
+                    clearOtpBoxes();
+                }
+            } catch (err) {
+                setLoading(verifyBtn, false, originalHtml);
+                showMessage('Verification failed', 'error');
+            }
+        }
+
+        // =========================
+        // RESEND OTP
+        // =========================
+        async function resendOTP() {
+            if (!currentPhone) return;
+
+            const resendBtn = document.getElementById('resendBtn');
+            const originalHtml = resendBtn.innerHTML;
+
+            setLoading(resendBtn, true, originalHtml);
+
+            try {
+                const result = await callSendOTP(currentPhone);
+                setLoading(resendBtn, false, originalHtml);
+
+                if (result.status === true) {
+                    showMessage('📨 OTP resent successfully!', 'success');
+                    clearOtpBoxes();
+                    stopTimer();
+                    startTimer();
+                } else {
+                    showMessage(result.message || 'Failed to resend OTP', 'error');
+                }
+            } catch (err) {
+                setLoading(resendBtn, false, originalHtml);
+                showMessage('Resend failed', 'error');
+            }
+        }
+
+        // =========================
+        // GO BACK
+        // =========================
+        function goBack() {
+            stopTimer();
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('phoneInput').value = '';
+            currentPhone = '';
+        }
+
+        // =========================
+        // PHONE VALIDATION
+        // =========================
+        document.getElementById('phoneInput').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+    </script>
+</body> 
+</html>

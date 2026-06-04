@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs - EASY OTP API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: 79, 70, 229;
+            --primary-hover: 67, 56, 202;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+        body.theme-indigo { --primary: 79, 70, 229; --primary-hover: 67, 56, 202; --primary-glow: rgba(79, 70, 229, 0.15); }
+        body.theme-violet { --primary: 124, 58, 237; --primary-hover: 109, 40, 217; --primary-glow: rgba(124, 58, 237, 0.15); }
+        body.theme-emerald { --primary: 5, 150, 105; --primary-hover: 4, 120, 87; --primary-glow: rgba(5, 150, 105, 0.15); }
+        body.theme-rose { --primary: 225, 29, 72; --primary-hover: 190, 24, 74; --primary-glow: rgba(225, 29, 72, 0.15); }
+        body.theme-amber { --primary: 217, 119, 6; --primary-hover: 180, 83, 9; --primary-glow: rgba(217, 119, 6, 0.15); }
+
+        .bg-primary-dynamic { background-color: rgb(var(--primary)); }
+        .bg-primary-hover-dynamic:hover { background-color: rgb(var(--primary-hover)); }
+        .text-primary-dynamic { color: rgb(var(--primary)); }
+        .border-primary-dynamic { border-color: rgb(var(--primary)); }
+        .bg-primary-glow-dynamic { background-color: var(--primary-glow); }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafafa;
+            background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        * { transition-duration: 200ms; }
+    </style>
+</head>
+<body class="theme-indigo antialiased text-slate-800">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed top-0 bottom-0 left-[-280px] md:left-0 w-[260px] bg-slate-950 text-white z-50 flex flex-col justify-between border-r border-slate-900 transition-all duration-300">
+        <div>
+            <div class="p-6 border-b border-slate-900/60 flex items-center gap-3">
+                <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><i class="fas fa-bolt text-white text-xs"></i></div>
+                <div>
+                    <h2 class="font-extrabold text-xs tracking-tight uppercase leading-none">EASY OTP</h2>
+                    <span class="text-[7px] text-slate-500 font-extrabold tracking-widest uppercase">API PROVIDER</span>
+                </div>
+            </div>
+            <nav class="p-4 space-y-1.5">
+                <a href="home.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-chart-pie"></i> Home</a>
+                <a href="api.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-plug"></i> API Console</a>
+                <a href="wallet.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-wallet"></i> Wallet</a>
+                <a href="docs.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-white bg-white/5 rounded-xl transition-all"><i class="fas fa-book"></i> Documentation</a>
+            </nav>
+        </div>
+    </aside>
+
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+    <div class="md:pl-[260px] min-h-screen flex flex-col">
+        <header class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200/50 z-30 px-6 h-16 flex items-center justify-between">
+            <button onclick="toggleSidebar()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-700"><i class="fas fa-bars"></i></button>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Interactive API Specs</span>
+            
+            <div class="flex items-center gap-4">
+                <div class="flex gap-1.5 p-1 bg-slate-50 border border-slate-200/80 rounded-full">
+                    <button onclick="changeTheme('indigo')" class="w-3.5 h-3.5 rounded-full bg-indigo-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('violet')" class="w-3.5 h-3.5 rounded-full bg-violet-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('emerald')" class="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('rose')" class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('amber')" class="w-3.5 h-3.5 rounded-full bg-amber-600 border border-white hover:scale-110 transition-all"></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-8">
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Developer Documentation</h1>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- DOCUMENTATION INDEX SIDE NAV -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm h-fit space-y-3">
+                    <h4 class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-4">TABLE OF CONTENTS</h4>
+                    <a href="#get-started" class="block text-xs font-bold text-slate-800 hover:text-primary-dynamic">1. Getting Started</a>
+                    <a href="#send-api" class="block text-xs font-bold text-slate-800 hover:text-primary-dynamic">2. Dispatch OTP Request</a>
+                    <a href="#verify-api" class="block text-xs font-bold text-slate-800 hover:text-primary-dynamic">3. Validate OTP Sessions</a>
+                </div>
+
+                <!-- API SPECIFICATION BLOCKS -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- Section 1: Getting Started -->
+                    <div id="get-started" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+                        <h3 class="text-base font-extrabold text-slate-950">1. Getting Started</h3>
+                        <p class="text-xs text-slate-500 font-medium leading-relaxed">Easy OTP allows you to dispatch secure 6-digit session validation codes seamlessly via WhatsApp API channels and GMail SMTP servers with zero setup costs.</p>
+                    </div>
+
+                    <!-- Section 2: POST /send OTP API -->
+                    <div id="send-api" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-500 text-white font-extrabold text-[9px] px-2 py-0.5 rounded">POST</span>
+                            <h3 class="text-xs font-black text-slate-950">/api/send-otp</h3>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">Transmit an authorization OTP code to any Indian number instantly.</p>
+                        
+                        <!-- Tabs block -->
+                        <div class="bg-slate-950 text-slate-200 rounded-xl p-4 font-mono text-[10px] space-y-3">
+                            <div class="text-[9px] text-slate-500 border-b border-slate-900 pb-2 flex gap-4">
+                                <span class="text-emerald-400 cursor-pointer">cURL</span>
+                                <span class="hover:text-white cursor-pointer">NodeJS</span>
+                                <span class="hover:text-white cursor-pointer">Python</span>
+                            </div>
+                            <pre class="overflow-x-auto text-emerald-400">
+curl -X POST https://easyotpapi.online/api \
+  -d "userId=3f70ce48-c778-4c75-a786-b36af6281ec6" \
+  -d "number=919876543210" \
+  -d "otp=123456"
+                            </pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('left-0');
+            document.getElementById('sidebar').classList.toggle('left-[-280px]');
+            document.getElementById('overlay').classList.toggle('hidden');
+        }
+
+        function changeTheme(themeName) {
+            document.body.className = `theme-${themeName} antialiased text-slate-800`;
+        }
+    </script>
+</body>
+</html>

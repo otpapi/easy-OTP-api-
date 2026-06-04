@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy OTP - Developer-first API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: 79, 70, 229; /* Default Indigo-600 */
+            --primary-hover: 67, 56, 202; /* Indigo-700 */
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+
+        /* Accent Color Themes */
+        body.theme-indigo {
+            --primary: 79, 70, 229;
+            --primary-hover: 67, 56, 202;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+        body.theme-violet {
+            --primary: 124, 58, 237; /* Violet-600 */
+            --primary-hover: 109, 40, 217;
+            --primary-glow: rgba(124, 58, 237, 0.15);
+        }
+        body.theme-emerald {
+            --primary: 5, 150, 105; /* Emerald-600 */
+            --primary-hover: 4, 120, 87;
+            --primary-glow: rgba(5, 150, 105, 0.15);
+        }
+        body.theme-rose {
+            --primary: 225, 29, 72; /* Rose-600 */
+            --primary-hover: 190, 24, 74;
+            --primary-glow: rgba(225, 29, 72, 0.15);
+        }
+        body.theme-amber {
+            --primary: 217, 119, 6; /* Amber-600 */
+            --primary-hover: 180, 83, 9;
+            --primary-glow: rgba(217, 119, 6, 0.15);
+        }
+
+        /* Dynamic Classes mapped to CSS Variables */
+        .bg-primary-dynamic { background-color: rgb(var(--primary)); }
+        .bg-primary-hover-dynamic:hover { background-color: rgb(var(--primary-hover)); }
+        .text-primary-dynamic { color: rgb(var(--primary)); }
+        .border-primary-dynamic { border-color: rgb(var(--primary)); }
+        .bg-primary-glow-dynamic { background-color: var(--primary-glow); }
+        .ring-primary-dynamic:focus { --tw-ring-color: rgba(var(--primary), 0.3); }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafafa;
+            /* Ultra-clean Premium Grid */
+            background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #0f172a 50%, rgb(var(--primary)));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Perfected iPhone Mockup Styling (Fixed Size) */
+        .iphone-pro {
+            width: 230px;
+            height: 460px;
+            background: #ffffff;
+            border: 8px solid #0f172a;
+            border-radius: 36px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.12);
+            margin: 0 auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dynamic-island {
+            width: 75px;
+            height: 20px;
+            background: #0f172a;
+            border-radius: 15px;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            z-index: 20;
+        }
+
+        .island-dot { width: 4px; height: 4px; background: #27272a; border-radius: 50%; }
+
+        /* Smooth Transition for Accent Shifting */
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .float-slow { animation: float 5s ease-in-out infinite; }
+        .float-delayed { animation: float 5s ease-in-out 2.5s infinite; }
+
+        /* Dark Section Grid */
+        .dark-grid {
+            background-color: #030712;
+            background-image: radial-gradient(#1f2937 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Hide Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fafafa;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d8;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="theme-indigo antialiased text-slate-900 leading-normal">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 w-full z-[100] bg-white/80 backdrop-blur-md border-b border-slate-200/50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2.5 cursor-pointer">
+                <div class="w-7 h-7 bg-slate-950 rounded-lg flex items-center justify-center shadow-md">
+                    <i class="fas fa-bolt text-white text-[11px]"></i>
+                </div>
+                <div>
+                    <div class="font-black text-sm tracking-tight leading-none text-slate-950">EASY OTP</div>
+                    <div class="text-[7.5px] text-slate-400 font-extrabold tracking-widest uppercase">OTP RELAY</div>
+                </div>
+            </div>
+            <div class="hidden md:flex gap-8 text-[13px] font-semibold text-slate-500">
+                <a href="#" class="hover:text-slate-950 transition-colors">Home</a>
+                <a href="#" class="hover:text-slate-950 transition-colors">Services</a>
+                <a href="#" class="hover:text-slate-950 transition-colors">Interactive Test</a>
+            </div>
+            <a href="https://yourdomain.com/login" class="bg-primary-dynamic bg-primary-hover-dynamic text-white px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-black/5 active:scale-95 transition-all text-center">Get started</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="pt-28 pb-16 px-6 relative">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            
+            <div class="flex-1 text-center lg:text-left z-10">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 bg-white border border-slate-200/80 px-4 py-1.5 rounded-full text-[10px] font-extrabold tracking-wider text-slate-500 uppercase mb-6 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary-dynamic animate-pulse"></span> NO KYC REQUIRED. INSTANT ACCESS.
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6 heading-gradient">
+                    Developer-first OTP API. <br>
+                    <span class="text-primary-dynamic">Built for India.</span>
+                </h1>
+
+                <p class="text-slate-500 text-base md:text-lg max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed font-medium">
+                    Integrate robust verification into your app in minutes. Reliable Gmail and WhatsApp OTPs with clean documentation and zero paperwork.
+                </p>
+
+                <!-- Interactive Color Changer Panel -->
+                <div class="mb-8 p-4 bg-white/60 border border-slate-200/50 backdrop-blur-sm rounded-2xl max-w-md mx-auto lg:mx-0 text-left">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2.5">Customize Accent Theme</span>
+                    <div class="flex gap-3">
+                        <button onclick="changeTheme('indigo')" class="w-6 h-6 rounded-full bg-indigo-600 ring-2 ring-offset-2 ring-indigo-500/0 hover:ring-indigo-500 focus:ring-indigo-500 transition-all"></button>
+                        <button onclick="changeTheme('violet')" class="w-6 h-6 rounded-full bg-violet-600 ring-2 ring-offset-2 ring-violet-500/0 hover:ring-violet-500 focus:ring-violet-500 transition-all"></button>
+                        <button onclick="changeTheme('emerald')" class="w-6 h-6 rounded-full bg-emerald-600 ring-2 ring-offset-2 ring-emerald-500/0 hover:ring-emerald-500 focus:ring-emerald-500 transition-all"></button>
+                        <button onclick="changeTheme('rose')" class="w-6 h-6 rounded-full bg-rose-600 ring-2 ring-offset-2 ring-rose-500/0 hover:ring-rose-500 focus:ring-rose-500 transition-all"></button>
+                        <button onclick="changeTheme('amber')" class="w-6 h-6 rounded-full bg-amber-600 ring-2 ring-offset-2 ring-amber-500/0 hover:ring-amber-500 focus:ring-amber-500 transition-all"></button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a href="https://yourdomain.com/login" class="bg-primary-dynamic bg-primary-hover-dynamic text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-xl shadow-black/5 active:scale-95 transition-all text-center">GET STARTED FOR FREE</a>
+                    <button class="bg-white border border-slate-200 px-8 py-3.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all">READ THE DOCS</button>
+                </div>
+            </div>
+
+            <!-- MOCKUP AREA (FIXED SIZE & SCALING) -->
+            <div class="relative w-full lg:w-auto flex justify-center mt-6 lg:mt-0 px-4">
+                
+                <!-- Floating WhatsApp Card -->
+                <div class="absolute -left-2 lg:-left-12 top-10 bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-150 flex items-center gap-2.5 float-slow z-30">
+                    <div class="w-8 h-8 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center text-sm"><i class="fab fa-whatsapp"></i></div>
+                    <div class="text-left pr-1">
+                        <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-tight">WhatsApp OTP</p>
+                        <p class="text-sm font-extrabold text-emerald-600 leading-none">₹0.30<span class="text-[9px] text-slate-400 font-normal ml-0.5">/api</span></p>
+                    </div>
+                </div>
+
+                <!-- Floating Gmail Card -->
+                <div class="absolute -right-2 lg:-right-12 bottom-16 bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-150 flex items-center gap-2.5 float-delayed z-30">
+                    <div class="w-8 h-8 bg-slate-50 text-slate-500 rounded-xl flex items-center justify-center text-xs font-bold">GM</div>
+                    <div class="text-left pr-1">
+                        <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-tight">Gmail Secure</p>
+                        <p class="text-sm font-extrabold text-slate-800 leading-none">₹0.10<span class="text-[9px] text-slate-400 font-normal ml-0.5">/api</span></p>
+                    </div>
+                </div>
+
+                <!-- Glow Background Behind Phone -->
+                <div class="absolute inset-0 bg-primary-glow-dynamic blur-[60px] rounded-full scale-75 -z-10"></div>
+
+                <!-- iPhone Frame -->
+                <div class="iphone-pro">
+                    <div class="dynamic-island">
+                        <div class="island-dot"></div>
+                        <div class="w-5 h-1 bg-[#222] rounded-full"></div>
+                    </div>
+                    
+                    <div class="h-full pt-20 px-6 text-center flex flex-col items-center justify-between pb-8">
+                        <div>
+                            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-2xl mb-4 shadow-inner border border-emerald-100 mx-auto">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h2 class="text-lg font-black text-emerald-600 mb-1 leading-tight tracking-tight">NUMBER VERIFIED</h2>
+                            <p class="text-[10px] text-slate-400 font-medium leading-relaxed px-2">Your phone number has been verified securely.</p>
+                        </div>
+                        
+                        <div class="my-4">
+                            <div class="bg-orange-50 text-orange-600 border border-orange-100/50 px-3.5 py-1.5 rounded-full text-[8.5px] font-extrabold uppercase tracking-wider inline-block shadow-sm">
+                                <i class="fas fa-shield-halved mr-1"></i> Secure Token Issued
+                            </div>
+                        </div>
+
+                        <div class="w-full">
+                            <div class="h-1 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500 w-[75%]"></div>
+                            </div>
+                            <p class="text-[8px] text-slate-400 mt-2 font-bold uppercase tracking-[0.15em]">Simulator Running...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- DARK SECTION -->
+    <section class="max-w-7xl mx-auto px-6 mb-20">
+        <div class="dark-grid rounded-[40px] p-8 lg:p-16 text-white relative overflow-hidden border border-slate-800/80">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1 h-5 bg-primary-dynamic rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]"></div>
+                <h3 class="text-[10px] font-extrabold tracking-[0.2em] text-primary-dynamic uppercase">EVERYTHING YOU NEED. NOTHING YOU DON'T.</h3>
+            </div>
+            
+            <h2 class="text-3xl lg:text-4xl font-bold mb-12 tracking-tight">Stripped away enterprise bloat. <br><span class="text-slate-500">Just clean APIs.</span></h2>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-slate-900/40 backdrop-blur-md p-8 rounded-2xl border border-white/5 hover:border-white/10 transition group">
+                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-lg mb-8 border border-emerald-500/20 group-hover:scale-105 transition"><i class="fas fa-bolt"></i></div>
+                    <p class="text-emerald-400 text-[10px] font-extrabold uppercase mb-2 tracking-widest">Instant API Deploy</p>
+                    <h4 class="text-xl font-bold mb-3">Zero Approval Time</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8 font-medium">Sign in with your phone number, get your API key, and push to production instantly. No paperwork.</p>
+                    <a href="https://yourdomain.com/login" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-xs shadow-lg shadow-emerald-950/40 transition text-center inline-block">GET STARTED FOR FREE</a>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-slate-900/40 backdrop-blur-md p-8 rounded-2xl border border-white/5 hover:border-white/10 transition group">
+                    <div class="w-12 h-12 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-lg mb-8 border border-rose-500/20 group-hover:scale-105 transition"><i class="fas fa-paper-plane"></i></div>
+                    <p class="text-rose-400 text-[10px] font-extrabold uppercase mb-2 tracking-widest">Gmail Tunnel (₹0.10)</p>
+                    <h4 class="text-xl font-bold mb-3">Gmail Delivery</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8 font-medium">High-deliverability email OTPs routed directly to the primary inbox. 99.9% uptime SLA included.</p>
+                    <a href="https://yourdomain.com/login" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-3.5 rounded-xl font-bold text-xs border border-slate-700 transition text-center inline-block">GET STARTED FOR FREE</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="pb-20 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <h3 class="text-2xl font-extrabold mb-3 tracking-tight">Trusted by engineering teams</h3>
+            <p class="text-slate-400 font-bold text-[11px] uppercase tracking-widest mb-12">Join thousands of Indian developers building on Easy OTP.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Testimonial Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm text-left">
+                    <p class="text-slate-600 text-sm italic font-medium leading-relaxed mb-8">"We moved from a legacy provider to EasyOTP. Integration took 10 minutes, and we bypassed the 3-day KYC headache."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center font-bold text-xs border border-slate-200">R</div>
+                        <div><p class="font-bold text-xs">Rahul Sharma</p><p class="text-[9px] font-bold text-slate-400 uppercase">Lead Engineer</p></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm text-left">
+                    <p class="text-slate-600 text-sm italic font-medium leading-relaxed mb-8">"The WhatsApp delivery speed is incredible. Sub-3-second latency consistently, and at ₹0.30 it's the best option."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center font-bold text-xs border border-emerald-100">A</div>
+                        <div><p class="font-bold text-xs">Ananya Gupta</p><p class="text-[9px] font-bold text-slate-400 uppercase">CTO, FinTech</p></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm text-left">
+                    <p class="text-slate-600 text-sm italic font-medium leading-relaxed mb-8">"No minimum commitments. I just topped up ₹500 via UPI and started testing immediately. Perfect experience."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs border border-indigo-100">K</div>
+                        <div><p class="font-bold text-xs">Karan Patel</p><p class="text-[9px] font-bold text-slate-400 uppercase">Indie Maker</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-slate-200/50 bg-white">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">© 2024 Easy OTP API. All rights reserved.</p>
+            <div class="flex gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <a href="#" class="hover:text-slate-900 transition-colors">Docs</a>
+                <a href="#" class="hover:text-slate-900 transition-colors">Terms</a>
+                <a href="#" class="hover:text-slate-900 transition-colors">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Theme Changer function to easily swap accent classes on body
+        function changeTheme(themeName) {
+            const body = document.body;
+            body.className = ''; // Reset body classes
+            body.classList.add('antialiased', 'text-slate-900', 'leading-normal', `theme-${themeName}`);
+        }
+    </script>
+</body>
+</html>

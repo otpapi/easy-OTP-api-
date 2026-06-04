@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Console - EASY OTP API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: 79, 70, 229;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+        }
+        body.theme-indigo { --primary: 79, 70, 229; --primary-glow: rgba(79, 70, 229, 0.15); }
+        body.theme-violet { --primary: 124, 58, 237; --primary-glow: rgba(124, 58, 237, 0.15); }
+        body.theme-emerald { --primary: 5, 150, 105; --primary-glow: rgba(5, 150, 105, 0.15); }
+        body.theme-rose { --primary: 225, 29, 72; --primary-glow: rgba(225, 29, 72, 0.15); }
+        body.theme-amber { --primary: 217, 119, 6; --primary-glow: rgba(217, 119, 6, 0.15); }
+
+        .bg-primary-dynamic { background-color: rgb(var(--primary)); }
+        .text-primary-dynamic { color: rgb(var(--primary)); }
+        .border-primary-dynamic { border-color: rgb(var(--primary)); }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafafa;
+            background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        * { transition-duration: 200ms; }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed top-0 bottom-0 left-[-280px] md:left-0 w-[260px] bg-slate-950 text-white z-50 flex flex-col justify-between border-r border-slate-900 transition-all duration-300 shadow-xl">
+        <div>
+            <div class="p-6 border-b border-slate-900/60 flex items-center gap-3">
+                <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><i class="fas fa-bolt text-white text-xs"></i></div>
+                <div>
+                    <h2 class="font-extrabold text-xs tracking-tight uppercase leading-none">EASY OTP</h2>
+                    <span class="text-[7px] text-slate-500 font-extrabold tracking-widest uppercase">API PROVIDER</span>
+                </div>
+            </div>
+            <nav class="p-4 space-y-1.5">
+                <a href="home.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-chart-pie"></i> Home</a>
+                <a href="api.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-white bg-white/5 rounded-xl transition-all"><i class="fas fa-plug"></i> API Console</a>
+                <a href="wallet.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-wallet"></i> Wallet</a>
+                <a href="docs.html" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"><i class="fas fa-book"></i> Documentation</a>
+            </nav>
+        </div>
+    </aside>
+
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+    <div class="md:pl-[260px] min-h-screen flex flex-col">
+        <!-- TOPBAR -->
+        <header class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200/50 z-30 px-6 h-16 flex items-center justify-between">
+            <button onclick="toggleSidebar()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-700"><i class="fas fa-bars"></i></button>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Secure Client Authorization</span>
+            
+            <div class="flex items-center gap-4">
+                <div class="flex gap-1.5 p-1 bg-slate-50 border border-slate-200/80 rounded-full shadow-sm">
+                    <button onclick="changeTheme('indigo')" class="w-3.5 h-3.5 rounded-full bg-indigo-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('violet')" class="w-3.5 h-3.5 rounded-full bg-violet-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('emerald')" class="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('rose')" class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white hover:scale-110 transition-all"></button>
+                    <button onclick="changeTheme('amber')" class="w-3.5 h-3.5 rounded-full bg-amber-600 border border-white hover:scale-110 transition-all"></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto space-y-8">
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">API Key Management</h1>
+
+            <!-- DYNAMIC SETUP/CONNECTED PANEL -->
+            <div id="apiCard" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <!-- Loaded dynamically by JavaScript -->
+                <div class="text-center py-6">
+                    <span class="inline-block text-xs font-bold text-slate-400"><i class="fas fa-spinner animate-spin mr-2"></i> Querying node configurations...</span>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE TESTING CONSOLE -->
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-sm text-slate-950 uppercase tracking-tight flex items-center gap-2 mb-3 border-b border-slate-100 pb-3"><i class="fas fa-terminal text-primary-dynamic"></i> Live Sandbox Testing Console</h3>
+                        <p class="text-xs text-slate-400 font-medium mb-6">Test dynamic OTP routing directly to WhatsApp numbers from this developer portal.</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Recipient Phone</label>
+                                <input type="tel" id="testPhone" placeholder="Enter 10-digit number" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs font-bold outline-none border-primary-dynamic focus:ring-2 focus:ring-slate-950/5">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Dynamic OTP Code</label>
+                                <input type="text" id="testOtp" value="294025" placeholder="Default: Auto Generated" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs font-bold outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="triggerSandboxTest()" class="w-full bg-primary-dynamic bg-primary-hover-dynamic text-white py-3 rounded-xl font-bold text-xs tracking-wide shadow-md active:scale-95 mt-6 transition-all">SEND SANDBOX OTP REQUEST</button>
+                </div>
+
+                <div class="bg-slate-950 text-emerald-400 rounded-2xl p-6 shadow-xl border border-slate-900 flex flex-col">
+                    <div class="flex items-center justify-between border-b border-slate-900 pb-3 mb-4">
+                        <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">RESPONSE MONITOR</span>
+                        <div class="flex gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span></div>
+                    </div>
+                    <pre class="flex-1 font-mono text-[10px] bg-black/40 p-4 rounded-xl border border-slate-900 overflow-y-auto min-h-[220px]" id="responseCode">
+// Ready to receive request...
+// Connect WhatsApp node to test sandbox.
+                    </pre>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        const savedUser = localStorage.getItem('easyotp_user');
+        if (!savedUser) { window.location.replace('login.html'); }
+
+        const savedTheme = localStorage.getItem('easyotp_theme') || 'indigo';
+        document.body.className = `antialiased text-slate-800 theme-${savedTheme}`;
+
+        function changeTheme(themeName) {
+            localStorage.setItem('easyotp_theme', themeName);
+            document.body.className = `antialiased text-slate-800 theme-${themeName}`;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('left-0');
+            document.getElementById('sidebar').classList.toggle('left-[-280px]');
+            document.getElementById('overlay').classList.toggle('hidden');
+        }
+
+        function toggleVisibility() {
+            const field = document.getElementById('apiKeyField');
+            field.type = field.type === "password" ? "text" : "password";
+        }
+
+        function copyToClipboard() {
+            const field = document.getElementById('apiKeyField');
+            navigator.clipboard.writeText(field.value);
+            alert("API Key copied to clipboard!");
+        }
+
+        // Fetch User node data from express to determine card rendering
+        async function loadNodeState() {
+            try {
+                const response = await fetch('/api/dashboard-data');
+                const data = await response.json();
+                if (data.status) {
+                    renderApiConsole(data);
+                }
+            } catch (e) {
+                console.error("API Key load failed");
+            }
+        }
+
+        // Dynamically renders screen layout depending on Connection state inside Firebase Realtime DB
+        function renderApiConsole(data) {
+            const apiCard = document.getElementById('apiCard');
+
+            if (data.whatsapp_connected === 'CONNECTED') {
+                // Renders key console if connected
+                apiCard.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 font-extrabold text-[9px] px-2 py-0.5 rounded-full tracking-wider">CONNECTED</span>
+                            <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest">+91 ${data.whatsapp_number} active</h3>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-extrabold text-slate-950 uppercase tracking-wider mb-1">Your API Credentials</h3>
+                            <p class="text-xs text-slate-400 font-medium">Use this secret key to authorize WhatsApp & GMail tunnel dynamic API requests.</p>
+                        </div>
+
+                        <div class="max-w-xl space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Auth Secret Token (API Key)</label>
+                                <div class="flex gap-3">
+                                    <input type="password" id="apiKeyField" readonly value="${data.api_key}" class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs font-bold text-slate-600 outline-none">
+                                    <button onclick="toggleVisibility()" class="px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all">Show</button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-3 pt-2">
+                                <button onclick="copyToClipboard()" class="bg-slate-950 hover:bg-slate-800 text-white px-5 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2"><i class="fas fa-copy"></i> Copy Key</button>
+                                <button onclick="disconnectWhatsAppNode()" class="bg-rose-50 border border-rose-100 text-rose-600 hover:bg-rose-100 px-5 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2"><i class="fas fa-sign-out-alt"></i> Disconnect Node</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (data.whatsapp_connected === 'PENDING') {
+                // Renders Pairing Code Screen if connection process is pending
+                apiCard.innerHTML = `
+                    <div class="text-center py-6 max-w-sm mx-auto space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 border border-amber-100 flex items-center justify-center text-xl mx-auto"><i class="fas fa-qrcode animate-pulse"></i></div>
+                        <h3 class="text-sm font-extrabold text-slate-950">Scan / Pair with your Phone</h3>
+                        <p class="text-xs text-slate-400 font-semibold leading-relaxed">Open WhatsApp -> Linked Devices -> Link with Phone Number. Enter this code to link device:</p>
+                        
+                        <div class="py-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-2xl font-black tracking-widest text-slate-800 font-sans select-all">${data.pairing_code}</div>
+                        
+                        <div class="flex justify-center items-center gap-2 text-[10px] font-bold text-amber-600">
+                            <i class="fas fa-spinner animate-spin"></i> Polling authorization status...
+                        </div>
+                        <button onclick="disconnectWhatsAppNode()" class="text-slate-400 hover:text-slate-600 text-[10px] font-bold tracking-wider uppercase pt-2 block mx-auto">Cancel Request</button>
+                    </div>
+                `;
+            } else {
+                // Renders Initial Setup screen if no session exists
+                apiCard.innerHTML = `
+                    <div class="max-w-md space-y-6">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-slate-950 uppercase tracking-wider mb-1">Connect WhatsApp to Create API Key</h3>
+                            <p class="text-xs text-slate-400 font-medium">Link your WhatsApp node first to generate your custom API tokens.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">WhatsApp Number to link</label>
+                                <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden focus-within:border-slate-950 focus-within:ring-2 focus-within:ring-slate-950/10 transition-all"> 
+                                    <span class="px-4 py-3 bg-slate-50 border-r border-slate-200 text-sm font-bold text-slate-500">+91</span> 
+                                    <input type="tel" id="whatsappNodePhone" placeholder="9876543210" maxlength="10" inputmode="numeric" class="w-full px-4 py-3 text-sm font-bold text-slate-800 placeholder:text-slate-300 outline-none"> 
+                                </div>
+                            </div>
+
+                            <button onclick="requestPairingCode()" class="w-full bg-primary-dynamic bg-primary-hover-dynamic text-white py-3 rounded-xl font-bold text-xs shadow-md transition-all">CONTINUE & GENERATE CODE</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Hits endpoint 1 to allocate Render API session
+        async function requestPairingCode() {
+            const number = document.getElementById('whatsappNodePhone').value.trim();
+            if (!number || number.length < 10) {
+                alert("Please enter a valid 10 digit number.");
+                return;
+            }
+
+            const btn = document.querySelector('button[onclick="requestPairingCode()"]');
+            btn.disabled = true;
+            btn.innerText = "ALLOCATING WHATSAPP NODE...";
+
+            const formData = new FormData();
+            formData.append('number', number);
+
+            try {
+                const response = await fetch('/api/whatsapp/connect', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.status) {
+                    loadNodeState(); // Reload layout structure
+                } else {
+                    alert(result.message || "Failed allocation");
+                    btn.disabled = false;
+                    btn.innerText = "CONTINUE & GENERATE CODE";
+                }
+            } catch (e) {
+                alert("Server error dispatching request");
+                btn.disabled = false;
+                btn.innerText = "CONTINUE & GENERATE CODE";
+            }
+        }
+
+        // Hits endpoint 2 to clear database and logout session
+        async function disconnectWhatsAppNode() {
+            if (!confirm("Are you sure? Old session credentials will be cleared.")) return;
+            try {
+                const response = await fetch('/api/whatsapp/disconnect', { method: 'POST' });
+                const result = await response.json();
+                if (result.status) {
+                    loadNodeState();
+                }
+            } catch (e) {
+                alert("Connection reset failed");
+            }
+        }
+
+        async function triggerSandboxTest() {
+            const phone = document.getElementById('testPhone').value.trim();
+            const otp = document.getElementById('testOtp').value.trim();
+            const monitor = document.getElementById('responseCode');
+
+            if (!phone || phone.length < 10) {
+                alert("Please enter a valid recipient number.");
+                return;
+            }
+
+            monitor.innerText = "// Dispatching payload via secure HTTPS POST...";
+
+            setTimeout(() => {
+                const dummyJson = {
+                    status: true,
+                    message: "OTP transmitted successfully",
+                    payload: {
+                        recipient: "+91 " + phone,
+                        channel: "WhatsApp",
+                        metadata: {
+                            otp_generated: otp || "294025",
+                            latency_ms: 184,
+                            api_credits_deducted: 0.30
+                        }
+                    }
+                };
+                monitor.innerText = JSON.stringify(dummyJson, null, 2);
+            }, 1000);
+        }
+
+        // Continuous Polling logic running on console page (updates card state instantly if verified)
+        loadNodeState();
+        setInterval(loadNodeState, 10000);
+    </script>
+</body>
+</html>
